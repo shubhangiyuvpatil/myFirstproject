@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="935efe09-2d73-4dfa-972d-c5e0d91aebaa" >
+		<db:oracle-connection host="localhost" user="XE" password="xe"/>
+	</db:config>
+	<flow name="databaseexampleFlow" doc:id="e3e63209-d174-4654-b0ee-8948215f91de" >
+		<scheduler doc:name="Scheduler" doc:id="342d2514-f121-4e38-acc5-13f8717b0a45" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="2" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</scheduler>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="edb6bfb0-6526-432b-9578-2d9580c7425c" >
+			<route >
+				<db:stored-procedure doc:name="CABeyond" doc:id="6d5e8023-c90d-4938-8cf5-cc34852b41a7" config-ref="Database_Config" target="CABeyond">
+			<db:sql><![CDATA[{call addCustomer(:name, :address)}]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	"name":"neha",
+	"address":"latur"
+}]]]></db:input-parameters>
+		</db:stored-procedure>
+				<set-payload value="#[vars.CABeyond]" doc:name="Set Payload" doc:id="e13bf7b0-a5fa-4792-96de-3ee7da5ffe89" />
+			</route>
+			<route >
+				<db:stored-procedure doc:name="USBeyond" doc:id="67641564-9a3d-4adb-8312-bc0b76e6c264" config-ref="Database_Config" target="USBeyond">
+			<db:sql><![CDATA[{call addProduct(:name, :id, :price)}]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	"name":"Dell Laptop",
+	"id":"104",
+	"price":"35000"
+}]]]></db:input-parameters>
+		</db:stored-procedure>
+				<set-payload value="#[vars.USBeyond]" doc:name="Set Payload" doc:id="2888d7e4-6106-486c-a3f6-db6a39cdc7f0" />
+			</route>
+		</scatter-gather>
+	</flow>
+</mule>

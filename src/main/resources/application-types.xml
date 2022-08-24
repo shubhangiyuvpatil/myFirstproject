@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="json" format="json">
+      <types:shape format="weave" example="examples/USBeyond1.json"><![CDATA[%dw 2.0
+
+type json = {|
+  name: String, 
+  id: String, 
+  price: String
+|} {"example": "{\\\"name\\\":\\\"Dell Laptop\\\",\\\"id\\\":\\\"104\\\",\\\"price\\\":\\\"35000\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#b4c89c70-b636-47e9-89a4-b2cfba53d583"/>
+</types:mule>
